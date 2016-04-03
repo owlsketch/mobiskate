@@ -51,9 +51,18 @@
 			var render = function () {
 				requestAnimationFrame( render );
 
-				cube.rotation.x = -(Math.abs(motiones.ay/6));
-				//cube.rotation.y = -(motiones.az);
-
+				if(motiones.az > 0) {
+					cube.rotation.x = motiones.ay/6;
+				}
+				else {
+					cube.rotation.x = -(motiones.ay/6);
+				}
+				if(motiones.az > 0) {
+					cube.rotation.z = motiones.ax/6;
+				}
+				else {
+					cube.rotation.z = -(motiones.ax/6);
+				}
 				renderer.render(scene, camera);
 			};
 
