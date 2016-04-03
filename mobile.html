@@ -22,6 +22,8 @@
     var socketID = -999;
 		socket.emit("identify", {source: "mobile"});
 
+    var motion = {};
+
     //If we have accelerometer access attach motion event.
     if (window.DeviceMotionEvent) {
       window.ondevicemotion = function(event) {
@@ -40,6 +42,8 @@
           document.getElementById('beta').textContent = arBeta;
           document.getElementById('gamma').textContent = arGamma;
         }
+        motion = {ax:ax, ay:ay, az:az, alpha:alpha, beta:beta, gamma:gamma};
+
       }
     } else {
       //TODO No access to accelerometer!  Error here!
@@ -65,7 +69,7 @@
 
 		window.setInterval(function() {
 			if(!(socketID === -999)) {
-				socket.emit("accelInfo", {socket: socketID, message: "HOLA MUNDO!"});
+				socket.emit("accelInfo", {socket: socketID, motion: motion});
 			}
 		}, 34);
 
