@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>DESK OWLSKETCHHHH</title>
+  </head>
+  <body>
+
+
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		var socket = io();
+		socket.emit("identify", {source: "desktop"});
+
+		socket.on("uniqueCode", function(returnCode) {
+			var newDiv = document.createElement("div");
+			var newContent = document.createTextNode(returnCode.code);
+			newDiv.appendChild(newContent);
+			document.body.appendChild(newDiv);
+		});
+	</script>
+  </body>
+</html>

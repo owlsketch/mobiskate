@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MOB OWLSKETCHHHH</title>
+  </head>
+  <body>
+  	<input type="text" placeholder="Enter code here" id="codeInput"/>
+	<button type="button" onclick="submitCode();">Submit</button>
+
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		var socket = io();
+		socket.emit("identify", {source: "mobile"});
+
+		//the two ways to accept the code input
+		function submitCode() {
+			var data = document.getElementById("codeInput");
+			//get element codeInput and return code value
+			socket.emit("confirm", {source: "mobile", code: data.value});
+		}
+	</script>
+  </body>
+</html>

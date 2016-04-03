@@ -1,0 +1,10 @@
+{
+  "name": "mobi-skate",
+  "version": "0.0.1",
+  "description": "feeds phone accelerometer data to a web browser",
+  "dependencies": {
+    "express": "^4.10.2",
+    "shortid": "^2.2.4",
+    "socket.io": "^1.4.5"
+  }
+}
