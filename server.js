@@ -1,4 +1,5 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http); //require socket, mount onto server
 var mongoose = require('mongoose');
@@ -11,6 +12,8 @@ mongoose.connection.on('error', function () {
 	console.log("MongoDB Error!!!");
 	process.exit(1);
 });
+
+app.use(express.static('static')); //for loading static files
 
 // root site
 app.get('/', function(req,res) {
