@@ -33,11 +33,11 @@
         document.getElementById('ax').textContent = ax;
         document.getElementById('ay').textContent = ay;
         document.getElementById('az').textContent = az;
-        rotation = event.rotationRate;
-        if (rotation != null) {
-          arAlpha = Math.round(rotation.alpha);
-          arBeta = Math.round(rotation.beta);
-          arGamma = Math.round(rotation.gamma);
+        var accel = event.acceleration;
+        if (accel != null) {
+          arAlpha = Math.round(accel.x);
+          arBeta = Math.round(accel.y);
+          arGamma = Math.round(accel.z);
           document.getElementById('alpha').textContent = arAlpha;
           document.getElementById('beta').textContent = arBeta;
           document.getElementById('gamma').textContent = arGamma;
