@@ -6,12 +6,44 @@
   <body>
   	<input type="text" placeholder="Enter code here" id="codeInput"/>
 	<button type="button" onclick="submitCode();">Submit</button>
+  <br />
+  ax: <span id="ax"></span><br />
+  ay: <span id="ay"></span><br />
+  az: <span id="az"></span><br />
+  arAlpha: <span id="alpha"></span><br />
+  arBeta: <span id="beta"></span><br />
+  arGamma: <span id="gamma"></span><br />
 
 	<script src="/socket.io/socket.io.js"></script>
 	<script>
+	  //Setup socket
 		var socket = io();
-		var socketID = -999;
+		//This will be the desktop socket id once we recieve it
+    var socketID = -999;
 		socket.emit("identify", {source: "mobile"});
+
+    //If we have accelerometer access attach motion event.
+    if (window.DeviceMotionEvent) {
+      window.ondevicemotion = function(event) {
+        ax = event.accelerationIncludingGravity.x;
+        ay = event.accelerationIncludingGravity.y;
+        az = event.accelerationIncludingGravity.z;
+        document.getElementById('ax').textContent = ax;
+        document.getElementById('ay').textContent = ay;
+        document.getElementById('az').textContent = az;
+        rotation = event.rotationRate;
+        if (rotation != null) {
+          arAlpha = Math.round(rotation.alpha);
+          arBeta = Math.round(rotation.beta);
+          arGamma = Math.round(rotation.gamma);
+          document.getElementById('alpha').textContent = arAlpha;
+          document.getElementById('beta').textContent = arBeta;
+          document.getElementById('gamma').textContent = arGamma;
+        }
+      }
+    } else {
+      //TODO No access to accelerometer!  Error here!
+    }
 
 		//the two ways to accept the code input
 		function submitCode() {
