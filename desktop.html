@@ -12,7 +12,8 @@
 		var motiones = {};
 		motiones.ax = 0.0;
 		motiones.ay = 0.0;
-		motiones.az = 0.0;
+    motiones.az = 0.0;
+    motiones.gamma = 0.0;
 
 		socket.emit("identify", {source: "desktop"});
 
@@ -29,11 +30,16 @@
 			//console.log(motion);
 			motiones.ax = data.motion.ax;
 			motiones.ay = data.motion.ay;
-			motiones.az = data.motion.az;
+      motiones.az = data.motion.az;
+      motiones.gamma = data.motion.gamma;
 		});
 	</script>
 
-	<script>
+  <script>
+    //var prevTime = performance.now();
+    //var moveVel = new THREE.Vector3();
+    //var jump = true;
+    
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 
@@ -43,13 +49,35 @@
 
 			var geometry = new THREE.BoxGeometry( 1, 1, 1 );
 			var material = new THREE.MeshNormalMaterial();
-			var cube = new THREE.Mesh( geometry, material );
+      var cube = new THREE.Mesh( geometry, material );
+      cube.position.y = 0;
 			scene.add( cube );
 
 			camera.position.z = 5;
 
 			var render = function () {
-				requestAnimationFrame( render );
+        requestAnimationFrame( render );
+        
+				//argamma accelerates in y axis
+        //if(motiones.gamma > 3.0 && jump === true) {
+          //moveVel.y = .1;
+          //jump = false;
+        //}
+
+        //var currentTime = performance.now();
+        //var delta = (currentTime - prevTime)/1000;
+
+        //moveVel.y -= 9.8 * 7.0 * delta;
+
+        //cube.translateY(moveVel.y * delta);
+
+        /*
+        if(cube.position.y < 0 ) {
+          jump = true;
+          moveVel.y = 0.0;
+          cube.position.y = 0;
+        }
+        */
 
 				if(motiones.az > 0) {
 					cube.rotation.x = motiones.ay/6;
@@ -62,10 +90,9 @@
 				}
 				else {
 					cube.rotation.z = -(motiones.ax/6);
-				}
+        }
 
-				//argamma accelerates in y axis
-
+        //prevTime = currentTime;
 				renderer.render(scene, camera);
 			};
 
