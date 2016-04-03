@@ -61,7 +61,7 @@
             var loader = new THREE.JSONLoader();
 			var skate;
             loader.load(".\\objects\\skate.json", function(geometry, material) {
-                var materialSkate = new THREE.MeshNormalMaterial();
+                var materialSkate = new THREE.MeshBasicMaterial({color: 0x2194ce, wireframe: true});
                 skate = new THREE.Mesh(geometry, materialSkate);
                 skate.position.y = -1;
 				skate.position.x = 0;
