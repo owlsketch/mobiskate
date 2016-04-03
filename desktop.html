@@ -6,6 +6,33 @@
 	<script src="./js/three.js"></script>
   </head>
   <body>
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		var socket = io();
+		var motiones = {};
+		motiones.ax = 0.0;
+		motiones.ay = 0.0;
+		motiones.az = 0.0;
+
+		socket.emit("identify", {source: "desktop"});
+
+		socket.on("uniqueCode", function(returnCode) {
+			var newDiv = document.createElement("div");
+			var newContent = document.createTextNode(returnCode.code);
+			newDiv.appendChild(newContent);
+			newDiv.id = "code";
+			document.body.appendChild(newDiv);
+			//need to fix this element to the top
+		});
+
+		socket.on("accelMessage", function(data) {
+			//console.log(motion);
+			motiones.ax = data.motion.ax;
+			motiones.ay = data.motion.ay;
+			motiones.az = data.motion.az;
+		});
+	</script>
+
 	<script>
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
@@ -15,7 +42,7 @@
 			document.body.appendChild( renderer.domElement );
 
 			var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-			var material = new THREE.MeshBasicMaterial( { color: 0x00ffff } );
+			var material = new THREE.MeshNormalMaterial();
 			var cube = new THREE.Mesh( geometry, material );
 			scene.add( cube );
 
@@ -24,27 +51,14 @@
 			var render = function () {
 				requestAnimationFrame( render );
 
+				//cube.rotation.x = -(motiones.ay);
+				cube.rotation.y = -(motiones.az);
+
 				renderer.render(scene, camera);
 			};
 
 			render();
 	</script>
 
-	<script src="/socket.io/socket.io.js"></script>
-	<script>
-		var socket = io();
-		socket.emit("identify", {source: "desktop"});
-
-		socket.on("uniqueCode", function(returnCode) {
-			var newDiv = document.createElement("div");
-			var newContent = document.createTextNode(returnCode.code);
-			newDiv.appendChild(newContent);
-			document.body.appendChild(newDiv);
-		});
-
-		socket.on("accelMessage", function(data) {
-			console.log(data.message);
-		});
-	</script>
   </body>
 </html>

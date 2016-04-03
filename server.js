@@ -94,9 +94,7 @@ io.on('connection', function(socket) { //a socket is a single connection
 	//only when we have gotten the right code will we be able to
 	//access this and send the info to our desktop
 	socket.on('accelInfo', function(info) {
-		var ran = Math.random();
-		console.log(info);
-		socket.broadcast.to(info.socket).emit('accelMessage', {message: ran});
+		socket.broadcast.to(info.socket).emit('accelMessage', {motion: info.motion});
 	});
 
 	socket.on('disconnect', function() {
