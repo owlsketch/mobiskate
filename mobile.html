@@ -10,6 +10,7 @@
 	<script src="/socket.io/socket.io.js"></script>
 	<script>
 		var socket = io();
+		var socketID = -999;
 		socket.emit("identify", {source: "mobile"});
 
 		//the two ways to accept the code input
@@ -18,6 +19,25 @@
 			//get element codeInput and return code value
 			socket.emit("confirm", {source: "mobile", code: data.value});
 		}
+
+		socket.on("wrongCode", function() {
+			var newDiv = document.createElement("div");
+			var newContent = document.createTextNode("WHOOPS, wrong code!");
+			newDiv.appendChild(newContent);
+			document.body.appendChild(newDiv);
+		});
+
+		socket.on("rightCode", function(data) {
+			socketID = data.socket;
+		});
+
+		window.setInterval(function() {
+			if(!(socketID === -999)) {
+				socket.emit("accelInfo", {socket: socketID, message: "HOLA MUNDO!"});
+			}
+		}, 34);
+
+			
 	</script>
   </body>
 </html>

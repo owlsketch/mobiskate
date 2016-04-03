@@ -17,6 +17,10 @@
 			newDiv.appendChild(newContent);
 			document.body.appendChild(newDiv);
 		});
+
+		socket.on("accelMessage", function(data) {
+			//console.log(data.message);
+		});
 	</script>
   </body>
 </html>

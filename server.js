@@ -1,7 +1,17 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http); //require socket, mount onto server
+var mongoose = require('mongoose');
+var Game = require('./models/Game');
 var shortid = require('shortid');
+var secrets = require('./secrets');
+
+mongoose.connect(secrets.mongoConnection);
+mongoose.connection.on('error', function () {
+	console.log("MongoDB Error!!!");
+	process.exit(1);
+});
+
 // root site
 app.get('/', function(req,res) {
 	res.sendFile(__dirname + '/index.html');
@@ -28,7 +38,19 @@ io.on('connection', function(socket) { //a socket is a single connection
 			var returnCode = {code: shortid.generate()};
 			socket.emit("uniqueCode", returnCode);
 
-			//also need to apply this code to this socket
+			//insert to db
+			var game = new Game({
+				socketID: socket.id,
+				code: returnCode.code,
+				available: true
+			});
+
+			game.save(function(err) {
+				if(err) {
+					return next(err);
+				}
+			});
+			
 		}
 		/*if not desktop, do nothing */
 	});
@@ -38,10 +60,40 @@ io.on('connection', function(socket) { //a socket is a single connection
 		//only controllers can send the code
 		if(info.source === "mobile") {
 			//need to see if the given code is code for one of our open sockets
-			//if yes, create lobby for desktop socket and mobile socket only, begin communication
-			console.log(info.code);			
-			//else, print, wrong code
+			Game.findOne({code: info.code, available: true}, function(err, gameObj) {
+				if(err) {
+					return next(err);
+				}
+				if(!gameObj) {
+					//need to inform the user!
+					socket.emit("wrongCode");
+				}
+				else {
+					//if found, update info
+					gameObj.available = false;
+					gameObj.save(function(err) {
+						if(err) {
+							return next(err);
+						}
+					});
+
+					//now give socketID to mobile so it has permission to communicate with directly
+					var socketID = gameObj.socketID;
+					socket.emit("rightCode", {socket: socketID}); 
+				}
+			});
+
+
 		}
+	});
+
+
+	//only when we have gotten the right code will we be able to
+	//access this and send the info to our desktop
+	socket.on('accelInfo', function(info) {
+		var ran = Math.random();
+		console.log(ran);
+		socket.broadcast.to(info.socket).emit('accelMessage', {message: ran});
 	});
 
 	socket.on('disconnect', function() {
